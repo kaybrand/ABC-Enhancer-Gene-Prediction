@@ -259,3 +259,11 @@ def _configure_tss_and_gene_files(biosamples_config):
 					
 	biosamples_config["TSS"] = TSS_files
 	biosamples_config["genes"] = gene_files
+
+## Benchmark file path for one job of `rule_name` (PERT/critical-path measurement).
+## Every wildcard the rule fans out on MUST be listed here. If one is omitted, all
+## jobs of that rule write to the SAME file and race -- the run still succeeds and the
+## measurement is silently destroyed. Rules with no wildcards get a single "all" file.
+def bench(rule_name, *wildcards):
+	stem = "~".join("{" + w + "}" for w in wildcards) if wildcards else "all"
+	return os.path.join(RESULTS_DIR, "benchmarks", rule_name, stem + ".tsv")

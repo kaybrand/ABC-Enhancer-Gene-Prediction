@@ -12,6 +12,8 @@ rule make_candidate_regions:
 		nStrongestPeak = config['params_candidate']['nStrongestPeaks'],
 		output_dir = os.path.join(RESULTS_DIR, "{biosample}", "Peaks"),
 		scripts_dir = SCRIPTS_DIR,
+	benchmark:
+		bench("make_candidate_regions", "biosample")
 	conda:
 		"../envs/abcenv.yml"
 	output: 

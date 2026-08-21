@@ -14,6 +14,8 @@ rule create_neighborhoods:
 		chrom_sizes = config['ref']['chrom_sizes'],
 		qnorm = f"--qnorm {config['ref']['qnorm']}" if config['params_neighborhoods']['use_qnorm'] else "",
 		scripts_dir = SCRIPTS_DIR
+	benchmark:
+		bench("create_neighborhoods", "biosample")
 	conda:
 		"../envs/abcenv.yml"
 	output: 

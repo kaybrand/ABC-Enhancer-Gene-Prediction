@@ -10,6 +10,8 @@ rule generate_qc_plot_and_summary:
 		scripts_dir = SCRIPTS_DIR,
 		gamma = config['params_predict']['hic_gamma'],
 		scale = config['params_predict']['hic_scale'],
+	benchmark:
+		bench("generate_qc_plot_and_summary", "biosample", "threshold", "separator", "other_flags")
 	conda:
 		"../envs/abcenv.yml"
 	output:

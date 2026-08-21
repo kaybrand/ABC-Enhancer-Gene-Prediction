@@ -25,6 +25,8 @@ rule create_predictions:
 		hic_pseudocount_distance = config['params_predict']['hic_pseudocount_distance'],
 		accessibility_feature = lambda wildcards: BIOSAMPLES_CONFIG.loc[wildcards.biosample, 'default_accessibility_feature'],
 		scripts_dir = SCRIPTS_DIR,
+	benchmark:
+		bench("create_predictions", "biosample")
 	conda:
 		"../envs/abcenv.yml"
 	output: 
@@ -58,6 +60,8 @@ rule filter_predictions:
 		threshold = lambda wildcards: determine_threshold(wildcards.biosample),
 		include_self_promoter = config['params_filter_predictions']['include_self_promoter'],
 		only_expressed_genes = config['params_filter_predictions']['only_expressed_genes'],
+	benchmark:
+		bench("filter_predictions", "biosample", "threshold", "separator", "other_flags")
 	conda:
 		"../envs/abcenv.yml"
 	output:

@@ -5,6 +5,8 @@ rule call_macs_peaks:
 	params:
 		pval = config['params_macs']['pval'],
 		genome_size = config['params_macs']['genome_size'],
+	benchmark:
+		bench("call_macs_peaks", "biosample")
 	conda:
 		"../envs/abcenv.yml"
 	output: 
@@ -38,6 +40,12 @@ rule generate_chrom_sizes_bed_file:
 		chrom_sizes = config['ref']['chrom_sizes']
 	output:
 		chrom_sizes_bed = os.path.join(RESULTS_DIR, "tmp", os.path.basename(config['ref']['chrom_sizes']) + '.bed')
+	# DELIBERATELY NOT BENCHMARKED. Snakemake's benchmark monitor polls the job's
+	# process tree with psutil; this awk over a 25-line file exits before psutil can
+	# attach, raising `NoSuchProcess: process PID not found` and FAILING the rule.
+	# It survives a local -j1 run and races under the SLURM executor. At ~0.03 s it
+	# contributes nothing to a critical path measured in minutes, so the measurement
+	# loses nothing and the run stops dying on a monitoring artifact.
 	resources:
 		mem_mb=determine_mem_mb
 	shell:
@@ -52,6 +60,8 @@ rule sort_narrowpeaks:
 		chrom_sizes_bed = os.path.join(RESULTS_DIR, "tmp", os.path.basename(config['ref']['chrom_sizes']) + '.bed')
 	params:
 		chrom_sizes = config['ref']['chrom_sizes']
+	benchmark:
+		bench("sort_narrowpeaks", "biosample")
 	conda:
 		"../envs/abcenv.yml"
 	output:
